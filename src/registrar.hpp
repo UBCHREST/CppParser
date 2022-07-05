@@ -4,7 +4,7 @@
 #include "factory.hpp"
 
 /**
- * RegisterEmptyConstructor a class that takes a predefined set of arguments
+ * Register a class that takes a predefined set of arguments
  */
 #define REGISTER(interfaceTypeFullName, classFullName, description, ...)                    \
     template <>                                                                             \
@@ -12,7 +12,7 @@
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(false, #classFullName, description, __VA_ARGS__);
 
 /**
- * RegisterEmptyConstructor a class that takes a predefined set of arguments and make it the default implementation
+ * Register a class that takes a predefined set of arguments and make it the default implementation
  */
 #define REGISTER_DEFAULT(interfaceTypeFullName, classFullName, description, ...)            \
     template <>                                                                             \
@@ -20,7 +20,7 @@
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description, __VA_ARGS__);
 
 /**
- * RegisterEmptyConstructor a class whose constructor takes a factory
+ * Register a class whose constructor takes a factory
  */
 #define REGISTER_FACTORY_CONSTRUCTOR(interfaceTypeFullName, classFullName, description)     \
     template <>                                                                             \
@@ -28,7 +28,7 @@
         cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryConstructor<classFullName>(false, #classFullName, description);
 
 /**
- * RegisterEmptyConstructor a class whose constructor takes a factory and make it the default implementation
+ * Register a class whose constructor takes a factory and make it the default implementation
  */
 #define REGISTER_DEFAULT_FACTORY_CONSTRUCTOR(interfaceTypeFullName, classFullName, description) \
     template <>                                                                                 \
@@ -36,21 +36,21 @@
         cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryConstructor<classFullName>(true, #classFullName, description);
 
 /**
- * RegisterEmptyConstructor a class without constructor arguments
+ * Register a class without constructor arguments
  */
 #define REGISTER_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description) \
     template <>                                                                       \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered = cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(false, #classFullName, description);
 
 /**
- * RegisterEmptyConstructor a class without constructor arguments and make it the default implementation
+ * Register a class without constructor arguments and make it the default implementation
  */
 #define REGISTER_DEFAULT_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description) \
     template <>                                                                               \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered = cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description);
 
 /**
- * RegisterEmptyConstructor a class and a function.  This function is passed a factory and should return a shared_ptr to the class.
+ * Register a class and a function.  This function is passed a factory and should return a shared_ptr to the class.
  */
 #define REGISTER_FACTORY_FUNCTION(interfaceTypeFullName, classFullName, description, function) \
     template <>                                                                                \
@@ -58,7 +58,7 @@
         cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryFunction<classFullName>(false, #classFullName, description, function);
 
 /**
- * RegisterEmptyConstructor a class and a function and make it the default implementation.  This function is passed a factory and should return a shared_ptr to the class.
+ * Register a class and a function and make it the default implementation.  This function is passed a factory and should return a shared_ptr to the class.
  */
 #define REGISTER_DEFAULT_FACTORY_FUNCTION(interfaceTypeFullName, classFullName, description, function) \
     template <>                                                                                        \
@@ -66,7 +66,7 @@
         cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryFunction<classFullName>(true, #classFullName, description, function);
 
 /**
- * RegisterEmptyConstructor a class with a single arguments as pass through and make it the default implementation.  This results the specified argument being passed directly to the constructor and is
+ * Register a class with a single arguments as pass through and make it the default implementation.  This results the specified argument being passed directly to the constructor and is
  * used to element a parser object that holds only one value.
  */
 #define REGISTER_PASS_THROUGH(interfaceTypeFullName, classFullName, description, argumentType) \
@@ -75,7 +75,7 @@
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(false, #classFullName, description, cppParser::ArgumentIdentifier<argumentType>{});
 
 /**
- * RegisterEmptyConstructor a class with a single arguments as pass through.  This results the specified argument being passed directly to the constructor and is used
+ * Register a class with a single arguments as pass through.  This results the specified argument being passed directly to the constructor and is used
  * to element a parser object that holds only one value.
  */
 #define REGISTER_DEFAULT_PASS_THROUGH(interfaceTypeFullName, classFullName, description, argumentType) \
