@@ -1,7 +1,7 @@
 # CppParser
 A c++ dependency injection/parsing library.  This library allows you to register that your class that meets an interface requirement.  When registering your class you must describe how to build your class (the arguments, their names, and a brief description).  
 
-For instance, in the following example the ParsedFunction implements MathFunction where it takes a single string argument for the formula. Register options are described in the following sections.
+For instance, in the following example the ParsedFunction implements MathFunction where it takes a single string argument for the formula. RegisterEmptyConstructor options are described in the following sections.
 
 ```c++
 #include "parser/registrar.hpp
