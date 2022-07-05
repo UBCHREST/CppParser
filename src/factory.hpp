@@ -12,12 +12,9 @@
 #include "argumentIdentifier.hpp"
 #include "instanceTracker.hpp"
 #include "pathLocator.hpp"
+#include "resolver.hpp"
 
 namespace cppParser {
-
-class Factory;
-template <typename Interface>
-std::shared_ptr<Interface> ResolveAndCreate(std::shared_ptr<Factory> factory);
 
 class Factory {
    protected:
@@ -93,7 +90,7 @@ class Factory {
         }
 
         // build the new instance
-        auto newInstance = ResolveAndCreate<Interface>(childFactory);
+        auto newInstance = cppParser::Resolver<Interface>().Create(childFactory);
 
         // store the instance if needed
         if (auto instanceTrackerPtr = instanceTracker.lock()) {

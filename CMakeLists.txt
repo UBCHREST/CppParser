@@ -7,7 +7,7 @@ project(CppParser VERSION 0.2.1)
 set(CMAKE_CXX_STANDARD 17)
 
 # Create the project
-add_library(cppParserLibrary SHARED)
+add_library(cppParserLibrary)
 
 # make cache variables for install destinations
 include(GNUInstallDirs)

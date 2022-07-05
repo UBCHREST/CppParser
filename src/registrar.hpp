@@ -10,6 +10,7 @@
 #include "demangler.hpp"
 #include "factory.hpp"
 #include "listing.hpp"
+#include "resolver.hpp"
 
 /**
  * Helper macros for registering classes
@@ -17,7 +18,7 @@
 
 #define RESOLVE(interfaceTypeFullName, classFullName) \
     template <>                                       \
-    std::shared_ptr<interfaceTypeFullName> cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Resolved = cppParser::ResolveAndCreate<interfaceTypeFullName>(nullptr)
+    std::shared_ptr<interfaceTypeFullName> cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Resolved = cppParser::Resolver<interfaceTypeFullName>().Create(nullptr)
 
 /**
  * Register a class that takes a predefined set of arguments
@@ -234,6 +235,12 @@ class Registrar {
     }
 };
 
+/**
+ * A single function to cal the factory and Registrar to create a function
+ * @tparam Interface
+ * @param factory
+ * @return
+ */
 template <typename Interface>
 std::shared_ptr<Interface> ResolveAndCreate(std::shared_ptr<Factory> factory) {
     if (factory == nullptr) {

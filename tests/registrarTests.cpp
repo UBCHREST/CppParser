@@ -202,7 +202,7 @@ TEST(RegistrarTests, ShouldResolveAndCreate) {
     Registrar<MockInterface>::RegisterWithFactoryConstructor<MockClass1>(false, "mockClass1", "this is a simple mock class");
 
     // act
-    auto instance = ResolveAndCreate<MockInterface>(mockFactory);
+    auto instance = cppParser::Resolver<MockInterface>().Create(mockFactory);
 
     // assert
     ASSERT_TRUE(instance != nullptr) << " should create an instance of the interface";
@@ -220,7 +220,7 @@ TEST(RegistrarTests, ShouldThrowExceptionWhenCannotResolveAndCreate) {
 
     // act
     // assert
-    ASSERT_THROW(ResolveAndCreate<MockInterface>(mockFactory), std::invalid_argument);
+    ASSERT_THROW(cppParser::Resolver<MockInterface>().Create(mockFactory), std::invalid_argument);
 }
 
 TEST(RegistrarTests, ShouldCreateDefaultAndUseWhenNotSpecified) {
@@ -233,7 +233,7 @@ TEST(RegistrarTests, ShouldCreateDefaultAndUseWhenNotSpecified) {
     Registrar<MockInterface>::RegisterWithFactoryConstructor<MockClass1>(true, "mockClass54", "this is a simple mock class");
 
     // act
-    auto result = ResolveAndCreate<MockInterface>(mockFactory);
+    auto result = cppParser::Resolver<MockInterface>().Create(mockFactory);
 
     // assert
     ASSERT_TRUE(result != nullptr);
@@ -261,7 +261,7 @@ TEST(RegistrarTests, ShouldThrowExceptionWhenNoDefaultIsSpecified) {
 
     // act
     // assert
-    ASSERT_THROW(ResolveAndCreate<NoDefaultInterface>(mockFactory), std::invalid_argument);
+    ASSERT_THROW(cppParser::Resolver<MockInterface>().Create(mockFactory), std::invalid_argument);
 }
 
 class MockClass6 : public MockInterface {
