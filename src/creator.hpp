@@ -16,7 +16,7 @@ namespace cppParser {
 class Factory;
 
 /**
-     * Use this symbol to mark that a derived class is default
+ * Use this symbol to mark that a derived class is default
  */
 static inline std::string DerivedSymbol = "->";
 
@@ -40,8 +40,8 @@ class Creator {
      * static vector of constructor methods for classes/interfaces that inherit from this
      * @return
      */
-    static std::map<std::string,std::function<TCreateMethod(const std::string&)>>& GetDerivedConstructionMethods() {
-        static auto methods = new std::map<std::string,std::function<TCreateMethod(const std::string&)>>();
+    static std::map<std::string, std::function<TCreateMethod(const std::string&)>>& GetDerivedConstructionMethods() {
+        static auto methods = new std::map<std::string, std::function<TCreateMethod(const std::string&)>>();
         return *methods;
     }
 
@@ -63,15 +63,15 @@ class Creator {
 
             // Also check th derived classes
             const auto& derivedConstructionMethods = GetDerivedConstructionMethods();
-            if (auto it = derivedConstructionMethods.find(DerivedSymbol+defaultClassName); it != derivedConstructionMethods.end()) return it->second(className);
+            if (auto it = derivedConstructionMethods.find(DerivedSymbol + defaultClassName); it != derivedConstructionMethods.end()) return it->second(className);
         }
-        //Now check each method for the class name
+        // Now check each method for the class name
         if (auto it = methods.find(className); it != methods.end()) return it->second;
 
         // check each of the derivedConstructionMethods
-        for(auto& [derivedClassName, derivedConstructionMethod] : GetDerivedConstructionMethods()){
+        for (auto& [derivedClassName, derivedConstructionMethod] : GetDerivedConstructionMethods()) {
             auto testResult = derivedConstructionMethod(className);
-            if(testResult != nullptr){
+            if (testResult != nullptr) {
                 return testResult;
             }
         }
