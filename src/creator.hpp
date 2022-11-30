@@ -6,7 +6,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include "argumentIdentifier.hpp"
 #include "demangler.hpp"
 #include "listing.hpp"
@@ -37,7 +36,7 @@ class Creator {
     }
 
     /**
-     * static vector of constructor methods for classes/interfaces that inherit from this
+     * static map of constructor methods for classes/interfaces that inherit from this
      * @return
      */
     static std::map<std::string, std::function<TCreateMethod(const std::string&)>>& GetDerivedConstructionMethods() {
