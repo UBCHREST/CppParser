@@ -262,7 +262,7 @@ class MockParentClass {};
 
 class MockChildClass : public MockParentClass {};
 
-TEST(RegistrarTests, ShouldRegisterDerivedRecordInLog) {
+TEST(RegistrarTests, ShouldRegisterDerivedAndRecordInLog) {
     // arrange
     auto mockListing = std::make_shared<MockListing>();
     EXPECT_CALL(*mockListing, RecordListing(Listing::DerivedEntry{.interface = Demangler::Demangle<MockParentClass>(), .className = "mockChildClass"})).Times(::testing::Exactly(1));
