@@ -91,7 +91,7 @@
                                                                                                        \
     template <>                                                                                        \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =            \
-        cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(true, #derivedClassFullName);
+        cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(#derivedClassFullName);
 
 
 namespace cppParser {
