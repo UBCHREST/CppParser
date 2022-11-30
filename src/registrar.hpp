@@ -84,6 +84,16 @@
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =            \
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description, cppParser::ArgumentIdentifier<argumentType>{});
 
+/**
+ * Register that a class is derived from a base class.  This allows all items registered in the derived class to be used for the base class
+ */
+#define REGISTER_DERIVED(interfaceTypeFullName, derivedClassFullName) \
+                                                                                                       \
+    template <>                                                                                        \
+    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =            \
+        cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(true, #derivedClassFullName);
+
+
 namespace cppParser {
 template <typename Interface>
 /**
