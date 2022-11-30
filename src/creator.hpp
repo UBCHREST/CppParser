@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 #include "argumentIdentifier.hpp"
 #include "demangler.hpp"
 #include "listing.hpp"
@@ -21,8 +22,21 @@ class Creator {
 
     using TCreateMethod = std::function<std::shared_ptr<Interface>(std::shared_ptr<Factory>)>;
 
+    /**
+     * static map of construction methods for this interface
+     * @return
+     */
     static std::map<std::string, TCreateMethod>& GetConstructionMethods() {
         static auto methods = new std::map<std::string, TCreateMethod>();
+        return *methods;
+    }
+
+    /**
+     * static vector of constructor methods for classes/interfaces that inherit from this
+     * @return
+     */
+    static std::map<std::string,std::function<TCreateMethod(const std::string&)>>& GetDerivedConstructionMethods() {
+        static auto methods = new std::map<std::string,std::function<TCreateMethod(const std::string&)>>();
         return *methods;
     }
 
@@ -31,6 +45,11 @@ class Creator {
         return *defaultClassName;
     };
 
+    /**
+     * check this and inherited class creator methods
+     * @param className
+     * @return
+     */
     static TCreateMethod GetCreateMethod(const std::string& className) {
         std::map<std::string, TCreateMethod>& methods = GetConstructionMethods();
         if (className.empty()) {
@@ -38,6 +57,14 @@ class Creator {
             if (auto it = methods.find(defaultClassName); it != methods.end()) return it->second;
         }
         if (auto it = methods.find(className); it != methods.end()) return it->second;
+
+        // check each of the derivedConstructionMethods
+        for(auto& [derivedClassName, derivedConstructionMethod] : GetDerivedConstructionMethods()){
+            auto testResult = derivedConstructionMethod(className);
+            if(testResult != nullptr){
+                return testResult;
+            }
+        }
 
         return nullptr;
     }

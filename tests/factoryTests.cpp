@@ -231,4 +231,86 @@ TEST(FactoryTests, ShouldGetMapOfSharedPointers) {
     ASSERT_TRUE(std::dynamic_pointer_cast<FactoryMockClass1>(result["key1"]) != nullptr);
     ASSERT_TRUE(std::dynamic_pointer_cast<FactoryMockClass1>(result["key2"]) != nullptr);
 }
+
+/**
+ * Create multi level inheritance
+ */
+class GrandParentMockClass {
+    virtual std::string GetLevel() const{
+        return "grandparent";
+    }
+};
+
+class ParentMockClass : public GrandParentMockClass{
+    virtual std::string GetLevel() const override{
+        return "parent";
+    }
+};
+
+class ChildMockClass : public ParentMockClass{
+    virtual std::string GetLevel() const override{
+        return "child";
+    }
+};
+
+TEST(FactoryTests, ShouldSupportMultiLevelInheritance) {
+    // arrange
+    // Register grandparent as grandparent
+    std::string grandparentClassName = "cppParserTesting::GrandParentMockClass";
+    cppParser::Registrar<GrandParentMockClass>::Register<GrandParentMockClass>(false, std::string(grandparentClassName), "");
+
+    // register parent as grandparent
+    std::string parentClassName = "cppParserTesting::ParentMockClass";
+    cppParser::Registrar<GrandParentMockClass>::Register<ParentMockClass>(false, std::string(parentClassName), "");
+
+    // register parent as derived from grandparent
+    cppParser::Registrar<GrandParentMockClass>::RegisterDerived<ParentMockClass>(std::string(parentClassName));
+
+
+    // register child as parent
+    std::string childClassName = "cppParserTesting::ChildMockClass";
+    cppParser::Registrar<ParentMockClass>::Register<ChildMockClass>(false, std::string(childClassName), "");
+
+
+    auto mockFactory = std::make_shared<MockFactory>();
+
+    // setup grandparent, parent, and child factories
+    auto grandparentFactory = std::make_shared<MockFactory>();
+    EXPECT_CALL(*mockFactory, GetFactory("grandparentInput")).Times(::testing::AtLeast(1)).WillRepeatedly(::testing::Return(grandparentFactory));
+    EXPECT_CALL(*grandparentFactory, GetClassType()).Times(::testing::AtLeast(1)).WillRepeatedly(::testing::ReturnRef(grandparentClassName));
+
+    auto parentFactory = std::make_shared<MockFactory>();
+    EXPECT_CALL(*mockFactory, GetFactory("parentFactoryInput")).Times(::testing::AnyNumber()).WillRepeatedly(::testing::Return(parentFactory));
+    EXPECT_CALL(*parentFactory, GetClassType()).Times(::testing::AnyNumber()).WillRepeatedly(::testing::ReturnRef(parentClassName));
+
+    auto childFactory = std::make_shared<MockFactory>();
+    EXPECT_CALL(*mockFactory, GetFactory("childFactoryInput")).Times(::testing::AnyNumber()).WillRepeatedly(::testing::Return(childFactory));
+    EXPECT_CALL(*childFactory, GetClassType()).Times(::testing::AnyNumber()).WillRepeatedly(::testing::ReturnRef(childClassName));
+
+    // act/assert
+    // Get the grandparent as a grandparent
+    auto grandparentAsGrandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClass>("grandparentInput");
+    ASSERT_TRUE(grandparentAsGrandparent != nullptr);
+
+    // Get the parent as a grandparent
+    auto parentAsGrandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClass>("parentFactoryInput");
+    ASSERT_TRUE(parentAsGrandparent != nullptr);
+
+    // Get the child as a parent
+    auto childAsParent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<ParentMockClass>("childFactoryInput");
+    ASSERT_TRUE(childAsParent != nullptr);
+
+    // Get the child as a grandparent
+    auto childAsGrandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClass>("childFactoryInput");
+    ASSERT_TRUE(childAsGrandparent != nullptr);
+
+//    auto argument = ArgumentIdentifier<GrandParentMockClass>{.inputName = "input123", .optional = false};
+//    auto result = std::dynamic_pointer_cast<Factory>(mockFactory)->Get(argument);
+//
+//    // assert
+//    ASSERT_EQ(result.size(), 2);
+//    ASSERT_TRUE(std::dynamic_pointer_cast<FactoryMockClass1>(result["key1"]) != nullptr);
+//    ASSERT_TRUE(std::dynamic_pointer_cast<FactoryMockClass1>(result["key2"]) != nullptr);
+}
+
 }  // namespace cppParserTesting

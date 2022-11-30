@@ -191,6 +191,27 @@ class Registrar {
         }
         return false;
     }
+
+    /* Register a class that inherits from this class */
+    template <typename DerivedClass>
+    static bool RegisterDerived(const std::string&& derivedClassName) {
+        auto& methods = cppParser::Creator<Interface>::GetDerivedConstructionMethods();
+        if (auto it = methods.find(derivedClassName); it == methods.end()) {
+            // Record the entry
+            //            Listing::Get().RecordListing(Listing::ClassEntry{
+            //                .interface = Demangler::Demangle<Interface>(),
+            //                .className = className,
+            //                .description = description,
+            //                .arguments = std::vector({Listing::ArgumentEntry{.name = args.inputName, .interface = Demangler::Demangle<Args>(), .description = args.description, .optional =
+            //                args.optional}...}), .defaultConstructor = defaultConstructor});
+
+            // create method
+            methods[derivedClassName] = [=](const std::string& className) { return cppParser::Creator<DerivedClass>::GetCreateMethod(className); };
+
+            return true;
+        }
+        return false;
+    }
 };
 
 template <typename Interface, typename Class>
