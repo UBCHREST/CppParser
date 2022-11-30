@@ -91,7 +91,17 @@
                                                                                                        \
     template <>                                                                                        \
     bool cppParser::RegisteredDerived<interfaceTypeFullName, derivedClassFullName>::Registered =            \
-        cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(#derivedClassFullName);
+        cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(false, #derivedClassFullName);
+
+/**
+ * Register that a class is derived from a base class.  This allows all items registered in the derived class to be used for the base class.
+ * When default, it will use the default value for the derived class
+ */
+#define REGISTER_DEFAULT_DERIVED(interfaceTypeFullName, derivedClassFullName) \
+                                                                                                       \
+    template <>                                                                                        \
+    bool cppParser::RegisteredDerived<interfaceTypeFullName, derivedClassFullName>::Registered =            \
+        cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(true, #derivedClassFullName);
 
 
 namespace cppParser {
@@ -204,7 +214,7 @@ class Registrar {
 
     /* Register a class that inherits from this class */
     template <typename DerivedClass>
-    static bool RegisterDerived(const std::string&& derivedClassName) {
+    static bool RegisterDerived(bool defaultConstructor, const std::string&& derivedClassName) {
         auto& methods = cppParser::Creator<Interface>::GetDerivedConstructionMethods();
         if (auto it = methods.find(derivedClassName); it == methods.end()) {
             // Record the entry
@@ -217,6 +227,14 @@ class Registrar {
 
             // create method
             methods[derivedClassName] = [=](const std::string& className) { return cppParser::Creator<DerivedClass>::GetCreateMethod(className); };
+
+            if (defaultConstructor) {
+                if (cppParser::Creator<Interface>::GetDefaultClassName().empty()) {
+                    cppParser::Creator<Interface>::GetDefaultClassName() = cppParser::DerivedSymbol + derivedClassName;
+                } else {
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + cppParser::Creator<Interface>::GetDefaultClassName());
+                }
+            }
 
             return true;
         }

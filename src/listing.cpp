@@ -1,5 +1,4 @@
 #include "listing.hpp"
-#include "demangler.hpp"
 
 void cppParser::Listing::RecordListing(cppParser::Listing::ClassEntry entry) { entries[entry.interface].push_back(std::move(entry)); }
 
