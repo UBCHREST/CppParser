@@ -90,7 +90,7 @@
 #define REGISTER_DERIVED(interfaceTypeFullName, derivedClassFullName) \
                                                                                                        \
     template <>                                                                                        \
-    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =            \
+    bool cppParser::RegisteredDerived<interfaceTypeFullName, derivedClassFullName>::Registered =            \
         cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(#derivedClassFullName);
 
 
@@ -226,6 +226,13 @@ class Registrar {
 
 template <typename Interface, typename Class>
 class RegisteredInFactory {
+   public:
+    static bool Registered;
+    static std::shared_ptr<Interface> Resolved;
+};
+
+template <typename Interface, typename Class>
+class RegisteredDerived {
    public:
     static bool Registered;
     static std::shared_ptr<Interface> Resolved;
