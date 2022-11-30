@@ -87,22 +87,21 @@
 /**
  * Register that a class is derived from a base class.  This allows all items registered in the derived class to be used for the base class
  */
-#define REGISTER_DERIVED(interfaceTypeFullName, derivedClassFullName) \
-                                                                                                       \
-    template <>                                                                                        \
-    bool cppParser::RegisteredDerived<interfaceTypeFullName, derivedClassFullName>::Registered =            \
+#define REGISTER_DERIVED(interfaceTypeFullName, derivedClassFullName)                            \
+                                                                                                 \
+    template <>                                                                                  \
+    bool cppParser::RegisteredDerived<interfaceTypeFullName, derivedClassFullName>::Registered = \
         cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(false, #derivedClassFullName)
 
 /**
  * Register that a class is derived from a base class.  This allows all items registered in the derived class to be used for the base class.
  * When default, it will use the default value for the derived class
  */
-#define REGISTER_DEFAULT_DERIVED(interfaceTypeFullName, derivedClassFullName) \
-                                                                                                       \
-    template <>                                                                                        \
-    bool cppParser::RegisteredDerived<interfaceTypeFullName, derivedClassFullName>::Registered =            \
+#define REGISTER_DEFAULT_DERIVED(interfaceTypeFullName, derivedClassFullName)                    \
+                                                                                                 \
+    template <>                                                                                  \
+    bool cppParser::RegisteredDerived<interfaceTypeFullName, derivedClassFullName>::Registered = \
         cppParser::Registrar<interfaceTypeFullName>::RegisterDerived<derivedClassFullName>(true, #derivedClassFullName)
-
 
 namespace cppParser {
 template <typename Interface>
@@ -218,12 +217,10 @@ class Registrar {
         auto& methods = cppParser::Creator<Interface>::GetDerivedConstructionMethods();
         if (auto it = methods.find(derivedClassName); it == methods.end()) {
             // Record the entry
-            //            Listing::Get().RecordListing(Listing::ClassEntry{
-            //                .interface = Demangler::Demangle<Interface>(),
-            //                .className = className,
-            //                .description = description,
-            //                .arguments = std::vector({Listing::ArgumentEntry{.name = args.inputName, .interface = Demangler::Demangle<Args>(), .description = args.description, .optional =
-            //                args.optional}...}), .defaultConstructor = defaultConstructor});
+            Listing::Get().RecordListing(Listing::ClassEntry{
+                .interface = Demangler::Demangle<Interface>(),
+                .className = derivedClassName,
+                .defaultConstructor = defaultConstructor});
 
             // create method
             methods[derivedClassName] = [=](const std::string& className) { return cppParser::Creator<DerivedClass>::GetCreateMethod(className); };
