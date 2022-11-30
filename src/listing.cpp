@@ -22,6 +22,7 @@ std::ostream &cppParser::operator<<(std::ostream &os, const cppParser::Listing &
             for (const auto &classEntry : listing.derivedEntries.at(interface.first)) {
                 os << classEntry;
             }
+            os << std::endl;
         }
 
         for (const auto &classEntry : interface.second) {
