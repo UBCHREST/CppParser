@@ -41,13 +41,13 @@ class Listing {
      * record normal listing
      * @param entry
      */
-    void RecordListing(ClassEntry entry);
+    virtual void RecordListing(ClassEntry entry);
 
     /**
      * record derived listing
      * @param entry
      */
-    void RecordListing(DerivedEntry entry);
+    virtual void RecordListing(DerivedEntry entry);
 
     // get the singleton instance
     static Listing &Get();

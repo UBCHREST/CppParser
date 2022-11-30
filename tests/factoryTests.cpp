@@ -304,22 +304,40 @@ TEST(FactoryTests, ShouldSupportMultiLevelInheritance) {
     ASSERT_EQ(childAsGrandparent->GetLevel(), "child");
 }
 
+/**
+ * Create multi level inheritance
+ */
+class GrandParentMockClassDefault {
+   public:
+    virtual std::string GetLevel() const { return "grandparent"; }
+};
+
+class ParentMockClassDefault : public GrandParentMockClassDefault {
+   public:
+    virtual std::string GetLevel() const override { return "parent"; }
+};
+
+class ChildMockClassDefault : public ParentMockClassDefault {
+   public:
+    virtual std::string GetLevel() const override { return "child"; }
+};
+
 TEST(FactoryTests, ShouldSupportMultiLevelInheritanceWithDefault) {
     // arrange
     // Register grandparent as grandparent
     std::string grandparentClassName = "cppParserTesting::GrandParentMockClass";
-    cppParser::Registrar<GrandParentMockClass>::Register<GrandParentMockClass>(false, std::string(grandparentClassName), "");
+    cppParser::Registrar<GrandParentMockClassDefault>::Register<GrandParentMockClassDefault>(false, std::string(grandparentClassName), "");
 
     // register parent as grandparent
     std::string parentClassName = "cppParserTesting::ParentMockClass";
-    cppParser::Registrar<GrandParentMockClass>::Register<ParentMockClass>(false, std::string(parentClassName), "");
+    cppParser::Registrar<GrandParentMockClassDefault>::Register<ParentMockClassDefault>(false, std::string(parentClassName), "");
 
     // register parent as derived from grandparent
-    cppParser::Registrar<GrandParentMockClass>::RegisterDerived<ParentMockClass>(true, std::string(parentClassName));
+    cppParser::Registrar<GrandParentMockClassDefault>::RegisterDerived<ParentMockClassDefault>(true, std::string(parentClassName));
 
     // register child as parent
     std::string childClassName = "cppParserTesting::ChildMockClass";
-    cppParser::Registrar<ParentMockClass>::Register<ChildMockClass>(true, std::string(childClassName), "");
+    cppParser::Registrar<ParentMockClassDefault>::Register<ChildMockClassDefault>(true, std::string(childClassName), "");
 
     auto mockFactory = std::make_shared<MockFactory>();
 
@@ -341,25 +359,24 @@ TEST(FactoryTests, ShouldSupportMultiLevelInheritanceWithDefault) {
 
     // act/assert
     // Get the grandparent as a grandparent, this should also default as a child
-    auto grandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClass>("grandparentInput");
+    auto grandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClassDefault>("grandparentInput");
     ASSERT_TRUE(grandparent != nullptr);
     ASSERT_EQ(grandparent->GetLevel(), "child");
 
     // Get the parent as a grandparent, this should also default as a child
-    auto parentAsGrandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClass>("parentFactoryInput");
+    auto parentAsGrandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClassDefault>("parentFactoryInput");
     ASSERT_TRUE(parentAsGrandparent != nullptr);
     ASSERT_EQ(parentAsGrandparent->GetLevel(), "child");
 
     // Get the child as a parent, this should also default as a child
-    auto childAsParent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<ParentMockClass>("childFactoryInput");
+    auto childAsParent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<ParentMockClassDefault>("childFactoryInput");
     ASSERT_TRUE(childAsParent != nullptr);
     ASSERT_EQ(childAsParent->GetLevel(), "child");
 
     // Get the child as a grandparent, this should also default as a child
-    auto childAsGrandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClass>("childFactoryInput");
+    auto childAsGrandparent = std::dynamic_pointer_cast<Factory>(mockFactory)->GetByName<GrandParentMockClassDefault>("childFactoryInput");
     ASSERT_TRUE(childAsGrandparent != nullptr);
     ASSERT_EQ(childAsGrandparent->GetLevel(), "child");
-
 }
 
 }  // namespace cppParserTesting

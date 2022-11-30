@@ -217,7 +217,7 @@ class Registrar {
         auto& methods = cppParser::Creator<Interface>::GetDerivedConstructionMethods();
         if (auto it = methods.find(derivedClassName); it == methods.end()) {
             // Record the entry
-            Listing::Get().RecordListing(Listing::ClassEntry{
+            Listing::Get().RecordListing(Listing::DerivedEntry{
                 .interface = Demangler::Demangle<Interface>(),
                 .className = derivedClassName,
                 .defaultConstructor = defaultConstructor});
